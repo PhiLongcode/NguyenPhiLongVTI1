@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import axiosConfig from './config';
 
 const CartContext = createContext([]);
 
@@ -11,7 +12,7 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    axios.get('https://64be5ddf5ee688b6250c473c.mockapi.io/cart')
+    axiosConfig.get('/carts')
       .then((response) => {
         setCartItems(response.data);
       })
@@ -21,7 +22,7 @@ export function CartProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    axios.put('https://64be5ddf5ee688b6250c473c.mockapi.io/cart', cartItems)
+    axiosConfig.put('/carts', cartItems)
       .catch((error) => {
         console.error('Error updating cart:', error);
       });

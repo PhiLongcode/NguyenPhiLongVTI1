@@ -2,17 +2,17 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import ShoeCard from '../../components/ShoeCard';
 import './Product.css'
+import axiosConfig from '../../config';
 function Product() {
     const [shoes, setShoes] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredShoes, setFilteredShoes] = useState([]);
 
     useEffect(() => {
-        fetch('https://64be5ddf5ee688b6250c473c.mockapi.io/products')
-            .then((response) => response.json())
-            .then((data) => {
-                setShoes(data);
-                setFilteredShoes(data);
+        axiosConfig.get('/products')
+            .then((res) => {
+                setShoes(res.data);
+                setFilteredShoes(res.data);
             })
             .catch((error) => console.error('Error fetching shoes:', error));
     }, []);

@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../CartContext'; // Import the useCart hook
-import { useHistory } from 'react-router-dom';
 const Header = () => {
   const [cartItems] = useCart(); // Use the useCart hook to get cartItems
-  const history = useHistory();
 
   const handleCartClick = () => {
-    history.push('/cart'); // Navigate to the cart page
   };
   return (
     <div className="header">

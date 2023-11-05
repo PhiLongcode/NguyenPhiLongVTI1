@@ -2,33 +2,60 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useCart } from '../CartContext';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axiosConfig from '../config';
 
 const ShoeCard = ({ shoe }) => {
-  const [, setCartItems] = useCart();
+  const [cartItems, setCartItems] = useCart();
   const [addedToCart, setAddedToCart] = useState(false);
 
-  const addToCart = () => {
+  const addToCart = async () => {
     if (!addedToCart) {
-      axios.post('https://64be5ddf5ee688b6250c473c.mockapi.io/cart', { ...shoe, quantity: 1 })
-        .then((response) => {
-          console.log('Added to cart:', response.data);
-          setCartItems((prevCartItems) => [...prevCartItems, response.data]);
-        })
-        .catch((error) => {
-          console.error('Error adding to cart:', error);
-        });
-      setAddedToCart(true);
+      console.log("shoe:::", shoe)
+      console.log("cartItems:::", cartItems)
+      const exitItem = cartItems.find(item => item.id === shoe.id)
+      console.log(exitItem)
+
+      if (!exitItem) {
+        const response = await axiosConfig.post('/carts', { ...shoe, quantity: 1 })
+        setCartItems((prevCartItems) => [...prevCartItems, response.data]);
+      } else {
+        const response = await axiosConfig.put(`/carts/${exitItem.id}`, { ...exitItem, quantity:  exitItem.quantity + 1});
+        setCartItems((prevCartItems) => [...prevCartItems, response.data]);
+      }
+      // .then((response) => {
+      //   console.log('Added to cart:', response.data);
+
+
+
+
+      //   toast.success('add to cart success', {
+      //     position: "top-right",
+      //     autoClose: 5000,
+      //     hideProgressBar: false,
+      //     closeOnClick: true,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "light",
+      //     });
+      //     // setAddedToCart(true)
+      // })
+      // .catch((error) => {
+      //   console.error('Error adding to cart:', error);
+      // });
     }
   };
   return (
     <div className="product">
 
-<div className="row row-cols-1 g-4">
+      <div className="row row-cols-1 g-4">
         <div className="col">
           <div className="card h-100 text-center">
             <img
               src={shoe.image} alt="{shoe.name}"
-              className="card-img img-fluid"
+              className="card-img img-fluid "
+              style={{ minHeight: "450px", maxHeight: "450px", objectFit: "cover" }}
             />
             <div className="card-body">
               <h5 className="card-title">
@@ -37,17 +64,17 @@ const ShoeCard = ({ shoe }) => {
               </h5>
               <p className="card-textt"></p>
               <div className="d-grid col-10 mx-auto">
-              {!addedToCart && (
-          <button className="btn btn-secondary mr-2" onClick={addToCart}>
-            Add to Cart
-          </button>
-        )}
+                {!addedToCart && (
+                  <button className="btn btn-secondary mr-2" onClick={addToCart}>
+                    Add to Cart
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
-        </div>
-    {/* <div class="row row-cols-1 g-4">
+      </div>
+      {/* <div class="row row-cols-1 g-4">
     <div class="col">
       <div class="card h-100">
         <img src={shoe.image} alt="{shoe.name}" class="card-img-top" />
@@ -64,7 +91,7 @@ const ShoeCard = ({ shoe }) => {
       </div>
     </div>
   </div> */}
-  </div>
+    </div>
   );
 };
 

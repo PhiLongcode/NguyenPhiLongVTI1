@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import {useParams} from "react-router-dom"
+import axiosConfig from '../config';
 
 const ProductDetail = ({ match }) => {
+  const params = useParams();
   const [shoe, setShoe] = useState(null);
-  const shoeId = match.params.id;
+  const shoeId = params.id;
 
   useEffect(() => {
-    fetch(`https://64be5ddf5ee688b6250c473c.mockapi.io/products/${shoeId}`)
-      .then((response) => response.json())
-      .then((data) => setShoe(data))
+    axiosConfig.get(`products/${shoeId}`)
+      .then((res) => setShoe(res.data))
       .catch((error) => console.error('Error fetching shoe details:', error));
   }, [shoeId]);
 
