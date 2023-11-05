@@ -3,17 +3,17 @@ import axios from "axios";
 import { useCart } from "../CartContext";
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import axiosConfig from "../config";
-
+import { Bars } from 'react-loading-icons'
 import { Button } from "primereact/button";
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
 const Cart = () => {
-    const [cartItems, setCartItems] = useCart();
+    const [cartItems, setCartItems, loading, setLoading] = useCart();
     const [content, setContent] = useState([]);
     const [selectedProducts, setSelectedProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
+
     const [total, setTotal] = useState(0);
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -48,8 +48,9 @@ const Cart = () => {
         }
     }, [selectedProducts, cartItems])
 
-    const handleDelete = (itemId) => {
-        axiosConfig
+    const handleDelete = async (itemId) => {
+        setLoading(true);
+        await axiosConfig
             .delete(
                 `/carts/${itemId}`
             )
@@ -63,6 +64,7 @@ const Cart = () => {
             .catch((error) => {
                 console.error("Error deleting item from cart:", error);
             });
+        setLoading(false)
     };
 
     const handleQuantityChange = (itemId, newQuantity) => {
@@ -273,9 +275,7 @@ const Cart = () => {
                     </>
                 )}
             </div>
-            {loading && <div className="d-flex justify-content-center align-items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(1,1,1, 0.6)", zIndex: 9999 }}>
-                <p className="text-lg text-light">Loading...</p>
-            </div>}
+
         </div>
     );
 };
